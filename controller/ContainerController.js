@@ -1,13 +1,13 @@
-const docker = require('dockerode')();
+const docker = require("dockerode")();
 
 // Function to list all containers
 async function listContainers(req, res) {
   try {
-    const containers = await docker.listContainers();
+    const containers = await docker.listContainers({ all: true });
     res.json(containers);
   } catch (error) {
-    console.error('Error listing containers:', error);
-    res.status(500).send('Failed to list containers');
+    console.error("Error listing containers:", error);
+    res.status(500).send("Failed to list containers");
   }
 }
 
@@ -51,19 +51,22 @@ async function inspectContainer(req, res) {
 }
 
 async function deleteContainer(req, res) {
-    const containerId = req.params.id;
-    try {
-      const container = docker.getContainer(containerId);
-      await container.remove();
-      res.send(`Container ${containerId} deleted successfully`);
-    } catch (error) {
-      console.error(`Error deleting container ${containerId}:`, error);
-      res.status(500).send(`Failed to delete container ${containerId}`);
-    }
-  
+  const containerId = req.params.id;
+  try {
+    const container = docker.getContainer(containerId);
+    await container.stop();
+    await container.remove();
+    res.send(`Container ${containerId} deleted successfully`);
+  } catch (error) {
+    console.error(`Error deleting container ${containerId}:`, error);
+    res.status(500).send(`Failed to delete container ${containerId}`);
+  }
 }
 
-module.exports = { listContainers, startContainer, stopContainer, inspectContainer, deleteContainer };
-
-
-
+module.exports = {
+  listContainers,
+  startContainer,
+  stopContainer,
+  inspectContainer,
+  deleteContainer,
+};
