@@ -50,7 +50,20 @@ async function inspectContainer(req, res) {
   }
 }
 
-module.exports = { listContainers, startContainer, stopContainer, inspectContainer };
+async function deleteContainer(req, res) {
+    const containerId = req.params.id;
+    try {
+      const container = docker.getContainer(containerId);
+      await container.remove();
+      res.send(`Container ${containerId} deleted successfully`);
+    } catch (error) {
+      console.error(`Error deleting container ${containerId}:`, error);
+      res.status(500).send(`Failed to delete container ${containerId}`);
+    }
+  
+}
+
+module.exports = { listContainers, startContainer, stopContainer, inspectContainer, deleteContainer };
 
 
 

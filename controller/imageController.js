@@ -61,7 +61,19 @@ async function inspectImage(req, res) {
   }
 }
 
-module.exports = { listImages, createImage, startImage, stopImage, inspectImage };
+async function deleteImage(req, res) {
+    const imageName = req.params.name;
+    try {
+      const image = docker.getImage(imageName);
+      await image.remove();
+      res.send(`Image ${imageName} deleted successfully`);
+    } catch (error) {
+      console.error(`Error deleting image ${imageName}:`, error);
+      res.status(500).send(`Failed to delete image ${imageName}`);
+    }
+  }
+
+module.exports = { listImages, createImage, startImage, stopImage, inspectImage,deleteImage };
 
 
 
